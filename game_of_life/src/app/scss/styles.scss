@@ -1,22 +1,44 @@
-html {
-  background:#ccc
+body{
+
+}
+.gameLayout{
+
+
+}
+.game{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  .board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
 }
 
 .square {
-  background: #fff;
-  border: 1px solid #999;
+  background: #000;
+  color:#777;
+  border: 1px solid rgba(#eee,.4);
   float: left;
-  font-size: 24px;
+  font-size: 17px;
   font-weight: bold;
-  line-height: 34px;
-  height: 34px;
+  line-height: 15px;
+  height: 15px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
-
-  &focus{
+  width: 15px;
+  &:focus{
     outline:none;
   }
+}
+
+.X{
+  background:rgb(255,117,117);
+}
+.O{
+  background: rgb(207,38,38);
 }
