@@ -10,8 +10,6 @@ const size = 4000;
 var squares = new Array(size);
 
 
-
-
 function renderBoardValues() {
   for (let i = 0; i < size; i++) {
     let k = Math.random();
@@ -31,6 +29,9 @@ class Board extends Component {
       xIsNext: true,
       interval: 200,
       reset: false,
+      pause: false,
+      restart: false,
+      generation: 0
     };
   }
 
@@ -41,23 +42,15 @@ class Board extends Component {
     );
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.pause == true) {
-      clearInterval(this.timerID);
-    } else {
-      this.timerID = setInterval(
-        () => this.tick(),
-        200
-      );
-    }
-  }
-
   componentWillUnmount() {
     clearInterval(this.timerID);
   }
 
   tick() {
     this.update();
+    this.setState({
+      generation: this.state.generation + 1
+    })
   }
 
   validate(pos) {
@@ -117,12 +110,34 @@ class Board extends Component {
     });
   }
 
+  handlePause() {
+    if (!this.state.pause) {
+      this.setState({
+        squares: squares,
+        pause: !this.state.pause,
+      })
+      clearInterval(this.timerID);
+    } else {
+      this.setState({
+        squares: squares,
+        pause: !this.state.pause,
+      })
+      this.timerID = setInterval(
+        () => this.tick(),
+        200
+      );
+    }
+
+  }
+
   handleReset() {
     squares = new Array(size);
     clearInterval(this.timerID);
     this.setState({
       squares: squares,
-      reset: !this.state.reset
+      pause: true,
+      restart: false,
+      generation: 0,
     })
   }
 
@@ -131,7 +146,13 @@ class Board extends Component {
       () => this.tick(),
       200
     );
+    this.setState({
+      pause: false,
+      generation: 0,
+      restart: false
+    })
     renderBoardValues();
+
   }
   renderSquare() {
     var globalMatrix = new Array(Math.floor(size / 100));
@@ -152,6 +173,8 @@ class Board extends Component {
           {this.renderSquare()}
           <button onClick={this.handleReset.bind(this)}>Reset</button>
           <button onClick={this.handleRestart.bind(this)}>Restart</button>
+          <button onClick={this.handlePause.bind(this)}>{this.state.pause ? "Resume" : "Pause"}</button>
+          <span> Generation : {this.state.generation}</span>
         </div>);
   }
 
