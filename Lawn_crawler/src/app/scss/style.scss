@@ -1,3 +1,70 @@
-body{
-  background: red;
+body {
+  .navbar {
+    border-radius: 0;
+  }
+
+  .Arena {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    .lawnrow {
+      width: 500px;
+      background: rgb(136,233,28);
+
+      .brick {
+        float: left;
+        width: 20px;
+        height: 20px;
+        background: rgb(161,160,160);
+      }
+
+      .space {
+        float: left;
+        width: 20px;
+        height: 20px;
+        background: rgb(136,233,28);
+      }
+
+      .player {
+        float: left;
+        width: 16px;
+        height: 16px;
+        margin: 2px;
+        background: rgb(0,224,255);
+        outline: 2px solid rgb(136,233,28);
+      }
+
+      .enemy {
+        float: left;
+        width: 16px;
+        height: 16px;
+        margin: 2px;
+        background: rgba(255,38,38,.74);
+        outline: 2px solid rgb(136,233,28);
+      }
+      // from https://css-tricks.com/hearts-in-html-and-css/
+      .life{
+        float: left;
+        width:20px;
+        height:20px;
+        background-image: url('https://d1nhio0ox7pgb.cloudfront.net/_img/v_collection_png/16x16/plain/heart.png');
+        background-size:cover;
+        background-position: center;
+      }
+
+      .weapon{
+        float: left;
+        width: 20px;
+        height: 20px;
+
+        background-image: url('https://armattanproductions.com/assets/images/shop-images/15066829001607572490.png');
+        background-size:cover;
+        background-position: center;
+
+      }
+    }
+
+
+  }
 }
