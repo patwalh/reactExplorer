@@ -1,181 +1,188 @@
-import React, {
-  Component
-} from 'react';
-import {
-  render
-} from 'react-dom';
+import React, {Component} from 'react';
+import {render} from 'react-dom';
 import Square from './square'
-//import Boardstruct from './boardstruct'
-const size = 4000;
-var squares = new Array(size);
-
-
-function renderBoardValues() {
-  for (let i = 0; i < size; i++) {
-    let k = Math.random();
-    if (k > 0.5) {
-      squares[i] = 'X';
-    }
-  }
-}
-renderBoardValues();
 
 
 class Board extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares: squares,
-      xIsNext: true,
-      interval: 200,
-      reset: false,
-      pause: false,
-      restart: false,
-      generation: 0
+      array : [],
+      pause : false,
+      run: false,
+      speed : 200,
+      counter:0
     };
   }
 
-  componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      200
-    );
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    this.update();
+  handleStart() {
+   if (this.state.pause === true) {
     this.setState({
-      generation: this.state.generation + 1
-    })
-  }
-
-  validate(pos) {
-    if (pos >= 0 && pos < size) return true;
-  }
-
-  count(pos) {
-    let count = 0;
-    if (this.validate(pos - 1) && (squares[pos - 1] == 'X' || squares[pos - 1] == 'O')) count++;
-    if (this.validate(pos + 1) && (squares[pos + 1] == 'X' || squares[pos + 1] == 'O')) count++;
-    if (this.validate(pos - 50) && (squares[pos - 50] == 'X' || squares[pos - 50] == 'O')) count++;
-    if (this.validate(pos + 50) && (squares[pos + 50] == 'X' || squares[pos + 50] == 'O')) count++;
-    if (this.validate(pos - 50 + 1) && (squares[pos - 50 + 1] == 'X' || squares[pos - 50 + 1] == 'O')) count++;
-    if (this.validate(pos - 50 - 1) && (squares[pos - 50 - 1] == 'X' || squares[pos - 50 - 1] == 'O')) count++;
-    if (this.validate(pos + 50 + 1) && (squares[pos + 50 + 1] == 'X' || squares[pos + 50 + 1] == 'O')) count++;
-    if (this.validate(pos + 50 - 1) && (squares[pos + 50 - 1] == 'X' || squares[pos + 50 - 1] == 'O')) count++;
-    return count;
-  }
-
-  born(pos) {
-    if ((squares[pos] !== 'X' ||
-        squares[pos] !== 'O') && this.count(pos) == 3) return true;
-    return false;
-  }
-
-  die(pos) {
-    if (this.count(pos) > 3 || this.count(pos) <= 1) return true;
-    //console.log(pos, this.count(pos))
-    return false;
-  }
-
-  update() {
-    var data = new Array(size);
-    for (let i = 0; i < size; i++) {
-      data[i] = this.count(i);
-    }
-    //console.log(data);
-    for (let i = 0; i < size; i++) {
-      if (squares[i] == 'O') squares[i] = 'X';
-    }
-
-    for (let i = 0; i < size; i++) {
-      if (data[i] > 3 || data[i] <= 1) squares[i] = null;
-      if (data[i] == 3) squares[i] = 'O';
-    }
-
-    this.setState({
-      squares: squares
-    })
-  }
-
-  handleClick(i) {
-    //console.log(this.props.pause);
-    squares[i] = 'X';
-    this.setState({
-      squares: squares,
+      pause: false
     });
+   }
+   this.startGame();
   }
 
-  handlePause() {
-    if (!this.state.pause) {
-      this.setState({
-        squares: squares,
-        pause: !this.state.pause,
-      })
-      clearInterval(this.timerID);
-    } else {
-      this.setState({
-        squares: squares,
-        pause: !this.state.pause,
-      })
-      this.timerID = setInterval(
-        () => this.tick(),
-        200
-      );
+startGame() {
+  var speed = this.state.speed;
+  this.setState({
+    run: true
+  });
+
+  function pauseGame() {
+    clearInterval(timer);
+  };
+
+  var check = setInterval(function() {
+   if (this.state.pause === true) {
+    pauseGame();
+   }
+
+ }.bind(this), 5);
+
+  var timer = setInterval(() => {
+    var grid = this.state.array.slice();
+    generate(grid);
+  }, speed);
+
+  var generate = function(a) {
+    var nextGen = [];
+    var neighb;
+
+    for (var x = 1; x < a.length; x++) {
+
+      // Iterate through current array and generate a neighb count based on the status of neighbor cells:
+      if ( x === 1 ) { neighb = a[x + 1][0] + a[x + 49][0] + a[x + 50][0] + a[x + 51][0]; }
+      else if ( x >= 2 && x <= 49) { neighb = a[x - 1][0] + a[x + 1][0] + a[x + 49][0] + a[x + 50][0] + a[x + 51][0]; }
+      else if ( x === 50 ) { neighb = a[x - 1][0] + a[x + 49][0] + a[x + 50][0]; }
+      else if ( x === 51 ) { neighb = a[x + 1][0] + a[x - 50][0] + a[x - 49][0] + a[x + 50][0] + a[x + 51][0]; }
+      else if ( x > 51 && x <= 1449) { neighb = a[x - 1][0] + a[x + 1][0] + a[x - 49][0] + a[x - 50][0] + a[x - 51][0] + a[x + 49][0] + a[x + 50][0] + a[x + 51][0]; }
+      else if ( x === 1450) { neighb = a[x - 1][0] + a[x + 49][0] + a[x + 50][0]; }
+      else if ( x === 1451 ) { neighb = a[x + 1][0] + a[x - 50][0] + a[x - 51][0]; }
+      else if ( x >= 1452 && x <= 1499) { neighb = a[x - 1][0] + a[x + 1][0] + a[x - 49][0] + a[x - 50][0] + a[x - 51][0]; }
+      else if ( x === 1500 ) { neighb = a[x - 1][0] + a[x - 49][0] + a[x - 50][0]; }
+
+      if ( a[x][0] === 0 ) {
+        if ( neighb === 3 ) { nextGen[x] = [1, 'living']; }
+        else { nextGen[x] = [0, 'dead']; }
+      }
+      else if ( a[x][0] === 1 ) {
+        if ( neighb === 0 || neighb === 1 ) { nextGen[x] = [0, 'killed']; }
+        else if ( neighb >= 4 ) { nextGen[x] = [0, 'killed']; }
+        else if ( neighb === 2 || neighb === 3 ) { nextGen[x] = [1, 'survivor']; }
+      }
+
     }
 
+    renderNextGeneration(nextGen);
+
+    }
+
+  var renderNextGeneration = function(array) {
+    var count = this.state.counter;
+    this.setState({
+      array: array,
+      counter: count + 1
+    });
+  }.bind(this);
+
+}
+
+handleCoordinates(index) {
+  var currentArray = this.state.array.slice();
+  if (currentArray[index][0] === 1) {
+    currentArray[index] = [0, 'dead'];
+  }
+  else {
+    currentArray[index] = [1, 'living'];
+  }
+  this.setState({
+    array: currentArray
+  })
+}
+
+renderRandomState() {
+  var array = [];
+  for (var i = 1; i < 30 * 50 + 1; i++) {
+    var rand = Math.round(Math.random(1) * 3);
+    var condition = 'living';
+    if (rand !== 1) { rand = 0; condition = 'dead' };
+    array[i] = [rand, condition];
   }
 
-  handleReset() {
-    squares = new Array(size);
-    clearInterval(this.timerID);
+
+  this.setState({
+    pause : true,
+    counter: 0,
+    array: array
+  });
+}
+
+componentWillMount() {
+  this.renderRandomState();
+}
+
+changeSpeed(x){
+  if(x === 'slow') this.setState({ speed : 1000 })
+  else if(x === 'medium') this.setState({ speed : 500 })
+  else  this.setState({ speed : 200 })
+}
+
+handlePauseBtn(){
+  this.setState({
+    pause : true
+  })
+}
+
+handleClearBtn() {
+  let a=[];
+  for(let i=1;i<1501;i++){
+    a[i] = [0,'dead']
+  }
+  this.setState({
+    array : a
+  })
+}
+
+handleSquareClick(v){
+  if(this.state.pause) {
+    let currentArray = this.state.array.slice();
+    if(currentArray[v][0] !== 1 ) currentArray[v] = [1,'living']
+    else currentArray[v] = [0, 'dead']
+
     this.setState({
-      squares: squares,
-      pause: true,
-      restart: false,
-      generation: 0,
+      array : currentArray
     })
   }
+}
 
-  handleRestart() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      200
-    );
-    this.setState({
-      pause: false,
-      generation: 0,
-      restart: false
-    })
-    renderBoardValues();
-
-  }
-  renderSquare() {
-    var globalMatrix = new Array(Math.floor(size / 100));
-    for (let j = 0; j < size / 100; j++) {
-      let matrix = new Array(Math.floor(size / 80));
-      for (let i = 0; i < size / 80; i++) {
+  render() {
+    var globalMatrix = [];
+    if(this.state.array.length > 0){
+    for (let j = 0; j < 30; j++) {
+      let matrix = [];
+      for (let i = 1 ; i <= 50 ; i++) {
         matrix.push(
-          <Square key={50*j+i} value={this.state.squares[50*j+i]} onClick={() => this.handleClick(50*j+i)}/>
+          <Square key={50*j+i} value={this.state.array[50*j+i][1]} onClick = {this.handleSquareClick.bind(this,50*j+i)}/>
         )
       }
       globalMatrix.push(<div className="board-row"> {matrix} </div>);
     }
-    return globalMatrix;
   }
 
-  render() {
-    return (<div>
-          {this.renderSquare()}
-          <button onClick={this.handleReset.bind(this)}>Reset</button>
-          <button onClick={this.handleRestart.bind(this)}>Restart</button>
-          <button onClick={this.handlePause.bind(this)}>{this.state.pause ? "Resume" : "Pause"}</button>
-          <span> Generation : {this.state.generation}</span>
-        </div>);
+    return (
+      <div>
+        {globalMatrix }
+        <button onClick={this.renderRandomState.bind(this)}>New Lawn</button>
+        <button onClick={this.handleStart.bind(this)}>Start</button>
+        <button onClick= {this.handlePauseBtn.bind(this)}> Pause </button>
+        <button onClick= {this.handleClearBtn.bind(this)}> Clear </button>
+        <button onClick={this.changeSpeed.bind(this,'slow')}>slow</button>
+        <button onClick={this.changeSpeed.bind(this,'medium')}>medium</button>
+        <button onClick={this.changeSpeed.bind(this,'fast')}>fast</button>
+        <button>Generation : {this.state.counter } </button>
+      </div>);
   }
 
 }

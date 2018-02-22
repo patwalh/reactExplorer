@@ -1,11 +1,12 @@
 body{
-
+ background: #eee;
 }
 .gameLayout{
 
 
 }
 .game{
+  margin-top: 10vh;
   display:flex;
   align-items: center;
   justify-content: center;
@@ -18,27 +19,19 @@ body{
 }
 
 .square {
-  background: #000;
-  color:#777;
-  border: 1px solid rgba(#eee,.4);
   float: left;
   font-size: 17px;
   font-weight: bold;
   line-height: 15px;
   height: 15px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
+  padding: 7px;
   text-align: center;
   width: 15px;
-  &:focus{
-    outline:none;
-  }
 }
 
-.X{
-  background:rgb(255,117,117);
+.living{
+  background:purple;
 }
-.O{
-  background: rgb(207,38,38);
+.survivor {
+  background: black;
 }
